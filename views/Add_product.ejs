@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  background: url(/images/bg.jpg) no-repeat ;
+  background-size: cover;
+}
+
+.sidebar {
+  margin-top: 54px;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  color: rgb(82, 54, 54);
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #e7df55;
+  color: rgb(105, 20, 97);
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #4e73ae;
+  color: rgb(188, 68, 176);
+}
+
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+
+ body {margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .topnav {
+    overflow: hidden;
+    background-color: #333;
+  }
+  
+  .topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  
+  .topnav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  /* Create a right-aligned (split) link inside the navigation bar */
+  .topnav a.split {
+    float: right;
+    background-color: #04AA6D;
+    color: white;
+  }
+  .form-label
+  {
+	color: white;
+  }
+  video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+</style>
+</head>
+<body>
+	<video autoplay loop muted>
+		<source src="/css/blockchain_video2.mp4" type="video/mp4">
+		Your browser does not support HTML5 video.
+	  </video>
+<div class="sidebar">
+  <a  href="home_page">Home</a>
+  <a href="Add_product" class="active">Add Products</a>
+  <a href="Update">UpdateDetails</a>
+  <a href="displaytranscations">Show Details</a>
+  <a href="logout">Logout</a>
+</div>
+<div class="topnav">
+    <a href="#FakeProduct">Add Your Product</a>
+    <!-- <h2>Add Your Products</h2> -->
+  </div>
+  <div class="formstyl" style="display:flex;justify-content: center;align-items: center;margin-top: 50px;">
+    <form  id="addNameForm" style="width: 400px;text-align: center;">
+      <!-- <div class="mb-3">
+        <label for="pid" class="form-label">Product id</label>
+        <input type="text" class="form-control" id="pid" aria-describedby="emailHelp">
+        
+      </div> -->
+      <div class="mb-3">
+        <label for="pname" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="pname" name="pname">
+      </div>
+      
+        <div class="mb-3">
+          <label for="source" class="form-label">Source</label>
+          <input type="text" class="form-control" id="source" name="source">
+        </div>
+        <div class="mb-3">
+          <label for="destination" class="form-label">Destination</label>
+          <input type="text" class="form-control" id="destination" name="destination">
+        </div>
+        <div class="mb-3">
+          <label for="remark" class="form-label">Remark</label>
+          <input type="text" class="form-control" id="remark" name="remark">
+        </div>
+      
+      <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+	<!-- <a href="displaytranscations.html"><button class="btn btn-primary" style="margin-left: 20px;">Show transcations</button></a> -->
+  </div>
+  <br>
+  <div id="qrcode" style="display: flex;justify-content: center;text-align: center;">
+
+  </div>
+</body>
+  <script>
+	
+	// const web3 = new Web3("http://localhost:7545");
+	const web3 = new Web3(window.ethereum);
+	const abi =[
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_source",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_destination",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_remark",
+				"type": "string"
+			}
+		],
+		"name": "add",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_source",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_destination",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_remark",
+				"type": "string"
+			}
+		],
+		"name": "update",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "myStructs",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "source",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "destination",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "remark",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "currentBlockTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "show",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "source",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "destination",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "remark",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "currentBlockTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"internalType": "struct Product.MyStruct[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+// Set the default account address
+
+	const address = '0x64Abc753FAe0Ed1c522818150c2A827E94FB17aD';
+	const myContract = new web3.eth.Contract(abi, address);
+
+	const addNameForm = document.getElementById('addNameForm');
+	addNameForm.addEventListener('submit', async (event) => {
+		
+		event.preventDefault();
+		// const productid=document.getElementById('pid');
+		const nameInput = document.getElementById('pname');
+		const source=document.getElementById('source');
+		const destination=document.getElementById('destination');
+		const remark=document.getElementById('remark');
+		const pid=getRandomInt();
+		const name = nameInput.value;
+		const psource=source.value;
+		const pdest=destination.value;
+		const premark=remark.value;
+	
+		
+		try {
+			const urk = '/items'; 
+
+			const data = {
+			pname: name,
+			source: psource,
+			destination: pdest,
+			remark: premark
+			};
+
+			const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+			};
+
+
+			fetch(urk, options)
+			.then(response => response.json())
+			.then(result => {
+				// console.log(result);
+				// Handle the response from the server
+			})
+			.catch(error => {
+				console.error(error);
+				// Handle any errors that occur during the request
+			});
+
+			await window.ethereum.enable();
+			const accounts = await web3.eth.getAccounts();
+			const gasPrice = await web3.eth.getGasPrice();
+			const gasLimit = 400000;
+			const result = await myContract.methods.add(pid,name,psource,pdest,premark).send({
+				from:accounts[0],
+				gas: gasLimit,
+				gasPrice: gasPrice
+			});
+			console.log('Transaction receipt:', result);
+			alert('Transaction added to blockchain sucessfully!');
+			// window.location.replace("/items");
+
+
+			var url = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=" +
+			pid;
+
+			var ifr = `<iframe src="${url}" height="200" width="200"></iframe>`;
+
+			document.getElementById('qrcode').innerHTML = ifr;
+
+			// var a = document.createElement('a');
+			// var a = document.createElement('a');
+  			// a.href = url;
+			// a.download = 'qr_code.png'; // Set the name for the downloaded file
+			// document.body.appendChild(a);
+			// a.click();
+			// document.body.removeChild(a);
+// a.href = url;
+// a.download = 'qr_code.png'; // Set the name for the downloaded file
+// a.click();
+		} catch (error) {
+			console.error('Transaction error:', error);
+			alert('Error adding name: ' + error.message);
+		}
+	});
+
+	//-----------------------------------
+// getRandomInt.remaining = [...Array(1000)].map((_, i) => i + 1);
+
+
+function getRandomInt() {
+    if (getRandomInt.remaining.length === 0) {
+      // If all numbers have been used, reset the array
+      getRandomInt.remaining = [...Array(1000)].map((_, i) => i + 1);
+      shuffleArray(getRandomInt.remaining);
+    }
+    return getRandomInt.remaining.pop();
+  }
+  
+  // Shuffle an array in place using the Fisher-Yates shuffle algorithm
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+  
+  // Initialize the remaining array with all numbers from 1 to 1000
+  getRandomInt.remaining = [...Array(1000)].map((_, i) => i + 1);
+  shuffleArray(getRandomInt.remaining);
+  
+  // Usage:
+
+
+	//------------------------------------
+</script>
+  
+
+</html>
+

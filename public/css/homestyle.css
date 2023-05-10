@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    font-family: "Lato", sans-serif;
+    background: url(/images/bg.jpg) no-repeat ;
+    background-size: cover;
+  }
+  
+  .sidebar {
+    margin-top: 49px;;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+  }
+  
+  .sidebar a {
+    display: block;
+    color: rgb(82, 54, 54);
+    padding: 16px;
+    text-decoration: none;
+  }
+   
+  .sidebar a.active {
+    background-color: #e7df55;
+    color: rgb(105, 20, 97);
+  }
+  
+  .sidebar a:hover:not(.active) {
+    background-color: #4e73ae;
+    color: rgb(188, 68, 176);
+  }
+  
+  div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+  
+  @media screen and (max-width: 700px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidebar a {float: left;}
+    div.content {margin-left: 0;}
+  }
+  
+  @media screen and (max-width: 400px) {
+    .sidebar a {
+      text-align: center;
+      float: none;
+    }
+  }
+  
+   body {margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    
+    .topnav {
+      overflow: hidden;
+      background-color: #333;
+    }
+    
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    
+    .topnav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    
+    /* Create a right-aligned (split) link inside the navigation bar */
+    .topnav a.split {
+      float: right;
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .dev {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: black;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
